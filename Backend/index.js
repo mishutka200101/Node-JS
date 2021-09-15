@@ -27,15 +27,26 @@ app.use((req, res, next) => {
 app.all('/test', (req, res, next) => {
     res.status(200).json({ message: "OK"});
 
-     next();
+    next();
 });
 
 //SUM of 2 numbers
-app.use('/sum', (req, res, next) => {
-    let x1 = parseInt(prompt("Enter 1st number: "));
-    let x2 = parseInt(prompt("Enter 2nd number: "));
+// app.use('/sum', (req, res, next) => {
+//     let x1 = parseInt(prompt("Enter 1st number: "));
+//     let x2 = parseInt(prompt("Enter 2nd number: "));
 
-    const sum = x1 + x2;
+//     const sum = x1 + x2;
+
+//     res.status(200).json({ sum });
+
+//     console.log(sum);
+
+//     next();
+// });
+
+app.post('/sum', (req, res, next) => {
+    let body = req.body;
+    let sum = body['x1'] + body['x2'];
 
     res.status(200).json({ sum });
 
@@ -60,7 +71,7 @@ app.use('/reverseCase', (req, res, next) => {
     console.log(result);
 
     next();
-})
+});
 
 //reverseArray of string
 app.use('/reverseArray', (req, res, next) => {
@@ -72,7 +83,7 @@ app.use('/reverseArray', (req, res, next) => {
     console.log(result);
     
     next();
-})
+});
 
 //4th task of 1st practice
 
