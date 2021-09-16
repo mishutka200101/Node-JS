@@ -57,8 +57,8 @@ app.post('/sum', (req, res, next) => {
 
 //reverseCase of string
 app.use('/reverseCase', (req, res, next) => {
-    let string = parse(prompt("Enter your string: "))['base'];
-    let stringArray = string.toString().split("");
+    let string = req.body['string'];
+    let stringArray = string.toString().split('');
 
     for (let i = 0; i < stringArray.length; i++) {
         stringArray[i] == stringArray[i].toUpperCase() ? stringArray[i] = stringArray[i].toLowerCase() : stringArray[i] = stringArray[i].toUpperCase();
@@ -75,7 +75,7 @@ app.use('/reverseCase', (req, res, next) => {
 
 //reverseArray of string
 app.use('/reverseArray', (req, res, next) => {
-    let string = parse(prompt("Enter your string: "))['base'];
+    let string = req.body['string'];
     let result = string.toString().split('').reverse().join('');
 
     res.status(200).json({ result });
