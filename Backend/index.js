@@ -23,14 +23,14 @@ app.use((req, res, next) => {
     next();
 });
 
-//TEST
+// TEST
 app.all('/test', (req, res, next) => {
     res.status(200).json({ message: "OK"});
 
     next();
 });
 
-//SUM of 2 numbers
+// SUM of 2 numbers
 // app.use('/sum', (req, res, next) => {
 //     let x1 = parseInt(prompt("Enter 1st number: "));
 //     let x2 = parseInt(prompt("Enter 2nd number: "));
@@ -55,7 +55,7 @@ app.post('/sum', (req, res, next) => {
     next();
 });
 
-//reverseCase of string
+// reverseCase of string
 app.use('/reverseCase', (req, res, next) => {
     let string = req.body['string'];
     let stringArray = string.toString().split('');
@@ -73,7 +73,7 @@ app.use('/reverseCase', (req, res, next) => {
     next();
 });
 
-//reverseArray of string
+// reverseArray of string
 app.use('/reverseArray', (req, res, next) => {
     let string = req.body['string'];
     let result = string.toString().split('').reverse().join('');
@@ -85,10 +85,10 @@ app.use('/reverseArray', (req, res, next) => {
     next();
 });
 
-//4th task of 1st practice
+// 4th task of 1st practice
 
 
-//Creating http server on port 3000
+// Creating http server on port 3000
 http.createServer(app).listen(3000, () => {
     console.log("Server is working on port 3000");
 });
