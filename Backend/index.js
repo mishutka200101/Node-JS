@@ -2,6 +2,8 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const prompt = require('prompt-sync')();
+const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize('postgres://localhost:5432/Node-JS');
 const { parse } = require('path');
 const { SlowBuffer } = require('buffer');
 
@@ -56,7 +58,7 @@ app.post('/sum', (req, res, next) => {
 });
 
 // reverseCase of string
-app.use('/reverseCase', (req, res, next) => {
+app.post('/reverseCase', (req, res, next) => {
     let string = req.body['string'];
     let stringArray = string.toString().split('');
 
@@ -74,7 +76,7 @@ app.use('/reverseCase', (req, res, next) => {
 });
 
 // reverseArray of string
-app.use('/reverseArray', (req, res, next) => {
+app.post('/reverseArray', (req, res, next) => {
     let string = req.body['string'];
     let result = string.toString().split('').reverse().join('');
 
