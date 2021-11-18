@@ -98,4 +98,4 @@ const ToDo = sequelize.define('ToDo', {
         type: DataTypes.STRING,
         allowNull: false
     }
-})
+});
