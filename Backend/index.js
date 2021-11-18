@@ -2,8 +2,12 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const prompt = require('prompt-sync')();
-const { Sequelize } = require('sequelize');
-const sequelize = new Sequelize('postgres://localhost:5432/Node-JS');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('postgres://smorchkov:25Zydfhz@localhost:5432/Node-JS', {
+    define: {
+        freezeTableName: true
+    }
+});
 const { parse } = require('path');
 const { SlowBuffer } = require('buffer');
 
@@ -32,19 +36,7 @@ app.all('/test', (req, res, next) => {
     next();
 });
 
-// SUM of 2 numbers
-// app.use('/sum', (req, res, next) => {
-//     let x1 = parseInt(prompt("Enter 1st number: "));
-//     let x2 = parseInt(prompt("Enter 2nd number: "));
-
-//     const sum = x1 + x2;
-
-//     res.status(200).json({ sum });
-
-//     console.log(sum);
-
-//     next();
-// });
+// sum of 2 numbers
 
 app.post('/sum', (req, res, next) => {
     let body = req.body;
@@ -94,3 +86,16 @@ app.post('/reverseArray', (req, res, next) => {
 http.createServer(app).listen(3000, () => {
     console.log("Server is working on port 3000");
 });
+
+
+//DB BLOCK-----------------------------------------------------------
+const ToDo = sequelize.define('ToDo', {
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+})
