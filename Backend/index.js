@@ -6,7 +6,8 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('postgres://smorchkov:25Zydfhz@localhost:5432/Node-JS', {
     define: {
         freezeTableName: true
-    }
+    },
+    schema: 'ToDo'
 });
 const { parse } = require('path');
 const { SlowBuffer } = require('buffer');
@@ -37,7 +38,6 @@ app.all('/test', (req, res, next) => {
 });
 
 // sum of 2 numbers
-
 app.post('/sum', (req, res, next) => {
     let body = req.body;
     let sum = body['x1'] + body['x2'];
@@ -99,3 +99,50 @@ const ToDo = sequelize.define('ToDo', {
         allowNull: false
     }
 });
+
+//CRUD CREATE
+app.post('/db/create', async (req, res, next) => {
+    let todo = {
+        title: req.body['title'],
+        description: req.body['description']
+    };
+
+    if (!todo.title || !todo.description) {
+        res.status(200).json({ "message": "Title or description is not filled!" });
+    } else {
+        let task = await ToDo.create(todo);
+        console.log(task.title);
+        res.status(200).json({ "message": "Row created"})
+    }
+
+    next();
+});
+
+//CRUD UPDATE
+app.put('/db/update', async (req, res, next) => {
+    if (!req.body['id']){
+        res.status(200).json({ "message": "id not found!" })
+    } else {
+        if (!req.body['title'] && !req.body['description']) {
+            res.status(200).json({ "message": "nothing to change!" })
+        } else {
+            let id = req.body['id'];
+            let task = await ToDo.update(req.body, {
+                where: { id: id }
+            });
+            res.status(200).json({ "message": "Task updated" })
+            console.log("Task with id", id, "updated");
+
+            next();
+        }
+    }
+})
+
+//CRUD GET
+app.get('/db/get', async (res, next) => {
+    let tasks = await ToDo.findAll();
+    res.status(200).json({ "message": tasks});
+    console.log(JSON.stringify(tasks));
+
+    next()
+})
