@@ -1,18 +1,14 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
-const prompt = require('prompt-sync')();
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('postgres://smorchkov:25Zydfhz@localhost:5432/Node-JS', {
-    define: {
-        freezeTableName: true
-    },
-    schema: 'ToDo'
-});
-const { parse } = require('path');
-const { SlowBuffer } = require('buffer');
+const apiRouter = require('./controllers/api.controller');
+const testRouter = require('./controllers/test.controller');
+const { notFound, errorHandler, asyncHandler } = require('./middlewares/middlewares');
+const { initDB } = require('./dataBase');
 
 const app = express();
+
+initDB();
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -24,125 +20,18 @@ app.use((req, res, next) => {
     console.log('METHOD = ', req.method);
     console.log('HOST = ', req.headers.host);
     console.log('IsSecure = ', req.secure);
-    console.log('BODY = ', req.body);
-    console.log('QUERY = ', req.query);
+    console.log('BODY', req.body);
+    console.log('QUERY', req.query);
 
     next();
 });
 
-// TEST
-app.all('/test', (req, res, next) => {
-    res.status(200).json({ message: "OK"});
+app.use('/api/todos', apiRouter);
+app.use('/test', testRouter);
 
-    next();
-});
+app.use(notFound);
+app.use(errorHandler);
 
-// sum of 2 numbers
-app.post('/sum', (req, res, next) => {
-    let body = req.body;
-    let sum = body['x1'] + body['x2'];
-
-    res.status(200).json({ sum });
-
-    console.log(sum);
-
-    next();
-});
-
-// reverseCase of string
-app.post('/reverseCase', (req, res, next) => {
-    let string = req.body['string'];
-    let stringArray = string.toString().split('');
-
-    for (let i = 0; i < stringArray.length; i++) {
-        stringArray[i] == stringArray[i].toUpperCase() ? stringArray[i] = stringArray[i].toLowerCase() : stringArray[i] = stringArray[i].toUpperCase();
-    }
-
-    let result = stringArray.join('');
-
-    res.status(200).json({ result });
-
-    console.log(result);
-
-    next();
-});
-
-// reverseArray of string
-app.post('/reverseArray', (req, res, next) => {
-    let string = req.body['string'];
-    let result = string.toString().split('').reverse().join('');
-
-    res.status(200).json({ result });
-
-    console.log(result);
-    
-    next();
-});
-
-// 4th task of 1st practice
-
-
-// Creating http server on port 3000
 http.createServer(app).listen(3000, () => {
     console.log("Server is working on port 3000");
 });
-
-
-//DB BLOCK-----------------------------------------------------------
-const ToDo = sequelize.define('ToDo', {
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-});
-
-//CRUD CREATE
-app.post('/db/create', async (req, res, next) => {
-    let todo = {
-        title: req.body['title'],
-        description: req.body['description']
-    };
-
-    if (!todo.title || !todo.description) {
-        res.status(200).json({ "message": "Title or description is not filled!" });
-    } else {
-        let task = await ToDo.create(todo);
-        console.log(task.title);
-        res.status(200).json({ "message": "Row created"})
-    }
-
-    next();
-});
-
-//CRUD UPDATE
-app.put('/db/update', async (req, res, next) => {
-    if (!req.body['id']){
-        res.status(200).json({ "message": "id not found!" })
-    } else {
-        if (!req.body['title'] && !req.body['description']) {
-            res.status(200).json({ "message": "nothing to change!" })
-        } else {
-            let id = req.body['id'];
-            let task = await ToDo.update(req.body, {
-                where: { id: id }
-            });
-            res.status(200).json({ "message": "Task updated" })
-            console.log("Task with id", id, "updated");
-
-            next();
-        }
-    }
-})
-
-//CRUD GET
-app.get('/db/get', async (res, next) => {
-    let tasks = await ToDo.findAll();
-    res.status(200).json({ "message": tasks});
-    console.log(JSON.stringify(tasks));
-
-    next()
-})
